@@ -1,0 +1,44 @@
+1. Download and install de Oracle Gateways utility in the file p13390677_112040_Linux-x86-64_5of7, during the
+installation process install de "Oracle Database Gateway for Microsoft SQL Server" component.
+
+2. Add the following entry to the listener.ora file located in $ORACLE_HOME/network/admin, remember to replace the mentioned
+paths in ORACLE_HOME and ENVS for the ones you currently are using and to backup the file before proceeding.
+SID_LIST_LISTENER=
+  (SID_LIST=
+    (SID_DESC=
+     (SID_NAME=dg4msql)
+     (ORACLE_HOME=/opt/app/oracle/product/11.2.0/db_1/)
+     (PROGRAM=dg4msql)
+     (ENVS="LD_LIBRARY_PATH=/opt/app/oracle/product/11.2.0/db_1/dg4msql/driver/lib:/opt/app/oracle/product/11.2.0/db_1/lib")
+    )
+  )
+
+3. Restart the listener.
+	- lsnrctl stop
+	- lsnrctl start
+
+4. Add the following entry in the tnsnames.ora file located in $ORACLE_HOME/network/admin, remember to backup the file before proceeding.
+dg4msql =
+  (DESCRIPTION=
+    (ADDRESS=(PROTOCOL=tcp)(HOST=mars.antoni.com)(PORT=1521))
+      (CONNECT_DATA=(SID=dg4msql))
+      (HS=OK)
+  )
+
+5. Verify that the entry in tnsnames.ora works.
+	- tnsping dg4msql
+The response should look like the text below:
+Used TNSNAMES adapter to resolve the alias
+Attempting to contact (DESCRIPTION= (ADDRESS=(PROTOCOL=tcp)(HOST=mars.antoni.com)(PORT=1521)) (CONNECT_DATA=(SID=dg4msql)) (HS=OK))
+OK (10 msec)
+
+6. Create the database link with the recent entry in tnsnames.
+CREATE PUBLIC DATABASE LINK SQLTEST CONNECT TO [USER/LOGIN] IDENTIFIED BY [PASSWD] USING 'dg4msql';
+
+Done :)
+
+Notes:
+1. You can find the database and server specified during the Gateways installation in the initdg4msql.ora file 
+   located in $ORACLE_HOME/dg4msql/admin.
+2. In order to change the database used in the connection, edit the HS_FDS_CONNECT_INFO parameter in initdg4msql.ora
+   with the desired database and recreate the DBLINK to see the changes.

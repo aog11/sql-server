@@ -1,0 +1,11 @@
+After the installation of the SQL Server if we want to connect remotely to the database, we need to:
+
+1. Configure the TCP/IP protocol on SQL Server Configuration Manager to "Enabled" and in the IP Addresses tab of its properties
+set TCP Dynamic to NULL and TCP Port to 1433 (SQL Sever's default port).
+
+2. Create two inboud rules on the firewall:
+  2.1 One that allows connections to the 1433 port through the TCP protocol.
+  2.2 Another one that allows connections to the 1434 port through the UDP protocol.
+
+In order to ping a server by IP and Hostname, in Windows Server, we need to create two inboud rules
+that allow traffic through the protocols ICMPv4 and ICMPv6.

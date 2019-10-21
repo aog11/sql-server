@@ -1,0 +1,56 @@
+Special thanks to SomeGuy for the answer in the serverfault site! Link below:
+https://serverfault.com/questions/175257/how-to-install-oracle-ole-drivers-for-use-in-sql-server-2008-r2-x64
+
+1.  Download 32 and 64-bit clients from http://www.oracle.com/technetwork/database/enterprise-edition/downloads/index.html (click "see all" to see different versions, otherwise, you'll be downloading the complete Oracle program. Your downloads should be about 600 meg each)
+2.  Run 32-Bit install on the SQL Server. Select "Custom"
+3.  For Oracle Base, enter "C:\Oracle"
+4.  For "Software Location", change to C:\Oracle\product\11.2.0\client_32
+5.  Choose the following components:
+	- SQL*Plus
+	- Oracle Call Interface (OCI)
+	- Oracle Net
+	- Oracle Services for Microsoft Transaction Server
+	- Oracle Administration Assistant for Windows
+	- Oracle Provider for OLE DB
+	- Oracle Data Provider for .NET
+	- Oracle Providers for ASP.NET
+6.  Repeat above steps with the 64-bit installer. HOWEVER, change the "Software Location" to C:\Oracle\product\11.2.0\client_64
+	I got a memory error at this point, but chose to ignore it since I know there is enough
+	Ignore the error "OracleMTSRecoveryService already exists"
+Now that the install is done, just need to tweak a few things.
+7.  Make registry changes to HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSDTC\MTxOCI
+	- OracleOciLib should be oci.dll
+	- OracleSqlLib should be orasql11.dll
+	- OracleXaLib should be oraclient11.dll
+8.  Make same registry changes to HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\MSDTC\MTxOCI
+9.  Create or copy a new tnsnames.ora in C:\Oracle\product\11.2.0\client_32\network\admin
+10. Create or copy a new tnsnames.ora in C:\Oracle\product\11.2.0\client_64\network\admin
+11. Reboot!
+
+You should now see OraOLEDB.Oracle as a provider under Linked Servers\Providers in SSMS
+Right-click this provider, then Properties, then tick the box for "Allow Inprocess"
+You can now create linked server through the GUI or T-SQL
+
+***Next Steps***
+12. Add the lines below to the indicated files in both the x32 and x64 locations of the Oracle Client
+      To sqlnet.ora:
+	NAMES.DIRECTORY_PATH= (TNSNAMES, HOSTNAME)
+	SQLNET.EXPIRE_TIME = 30
+      To tnsnames.ora
+	---The service name entry for the target database, for example:
+PRODB =
+ (DESCRIPTION =
+   (ADDRESS_LIST =
+     (ADDRESS = (PROTOCOL = TCP)(HOST = 10.0.0.90)(PORT = 1521))
+   )
+   (CONNECT_DATA =
+     (SERVER = DEDICATED)
+     (SERVICE_NAME = prodb)
+   )
+ )
+
+13. Create the linked server through SSMS or T-SQL following the example in oracleLinkedServer.sql and
+
+14. Test the linked server with a query
+SELECT * FROM OPENQUERY([MARS.ANTONI.COM] , 'select sysdate from dual');
+If you get a result, congrats, it's done! :)
