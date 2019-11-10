@@ -7,7 +7,7 @@ GO
 /*
 Full        - All transaction logs a backed up and recovery can be made to any point in time. 
 			  Also, transaction logs stay growing.
-Simple      - Once transactions are written to a data file, it's replace by a new one, so the 
+Simple      - Once transactions are written to a data file, it's replaced by a new one, so the 
 			  recovery can only be made to the most recent backed up transactions.
 Bulk logged - Functions like a full backup but doesn't register BULK opertaions (INSERT, SELECT INTO, etc.).
 */
@@ -77,6 +77,8 @@ TO DISK = 'C:\Program Files\Microsoft SQL Server\MSSQL14.SQL2K17_PROD\MSSQL\Back
 GO
 
 -- Script to backup the database
+USE master;
+GO
 DECLARE @filename varchar(1000), 
 		@dbname varchar(100) = 'prodb',
 		@location varchar(1000) = 'C:\Program Files\Microsoft SQL Server\MSSQL14.SQL2K17_PROD\MSSQL\Backup\',
@@ -86,6 +88,8 @@ BACKUP DATABASE @dbname TO DISK = @filename
 GO
 
 -- Script to restore the database
+USE master;
+GO
 DECLARE @filename varchar(1000), 
 		@dbname varchar(100) = 'prodb',
 		@location varchar(1000) = 'C:\Program Files\Microsoft SQL Server\MSSQL14.SQL2K17_PROD\MSSQL\Backup\',
