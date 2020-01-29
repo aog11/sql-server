@@ -1,4 +1,5 @@
 --Not related to SQL Server but I didn't want to lose this useful script
+
 SELECT a.tablespace_name,
        TRUNC (a.free_bytes / POWER (1024, 2), 2)       free_mb,
        TRUNC (b.total_bytes / POWER (1024, 2), 2)      total_mb,
@@ -12,7 +13,9 @@ SELECT a.tablespace_name,
             FROM dba_data_files ddf, dba_tablespaces dt
            WHERE ddf.tablespace_name = dt.tablespace_name
         GROUP BY dt.tablespace_name) b
- WHERE a.tablespace_name = b.tablespace_name--AVAILABLE SPACE IN THE TABLESPACES
+ WHERE a.tablespace_name = b.tablespace_name
+ 
+ --AVAILABLE SPACE IN THE TABLESPACES
   SELECT a.tablespace_name,
          a.free_mb,
          b.total_mb,
