@@ -9,3 +9,11 @@ set TCP Dynamic to NULL and TCP Port to 1433 (SQL Sever's default port).
 
 In order to ping a server by IP and Hostname, in Windows Server, we need to create two inboud rules
 that allow traffic through the protocols ICMPv4 and ICMPv6.
+
+The equivalent of TRUNC to a date and the TO_DATE function in SQL Server:
+
+convert(date,create_date,105) -- Truncates the date, removes hour, seconds, etc.
+convert(date,'26-03-2020',105) -- Turns a string into a date in the YYYY/MM/DD format.
+
+select * from sys.all_objects
+where convert(date,create_date,105) = convert(date,'26-03-2020',105);
